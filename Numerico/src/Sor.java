@@ -12,7 +12,7 @@ public class Sor {
         u = new float[solucion.length];
         f = solucion;
         this.semilla = semilla.clone();
-        error = 0.0f;
+        error = 1.0f;
         dimension = u.length - 1;
         gs = new GaussSeidel(solucion,semilla);
         w = 1.0f;
@@ -47,7 +47,60 @@ public class Sor {
         }
     }
 
-    public float[] obtenerSolucion(){return u;}
+    public float[] obtenerSolucion(){
+        return u;
+    }
 
-    public float obtenerError(){return error;}
+    public float obtenerError(){
+        return error;
+    }
+
+    public void setearOmega(float omega) {
+        w = omega;
+    }
+
+    public void reiniciarVariables(){
+        Operador.reiniciarVariables(u,semilla);
+        gs.reiniciarVariables();
+        error = 1.0f;
+    }
+
+    public float omegaOptimo(){
+        float omega = 1.0f;
+        int minimasIteraciones;
+        int iteraciones = 1;
+        float errorOptimo = 1.0f;
+        setearOmega(omega);
+
+        while (!Operador.condicionCorte(error)){
+            calcular();
+            iteraciones++;
+        }
+        minimasIteraciones = iteraciones - 1;
+
+        float incremento = 0.05f;
+        for (float w = (1+incremento); Operador.redondear(w,2) <= 1.95f; w += incremento){
+            reiniciarVariables();
+            iteraciones = 1;
+            setearOmega(Operador.redondear(w,2));
+            while (!Operador.condicionCorte(error)){
+                calcular();
+                iteraciones++;
+            }
+            if((iteraciones - 1 <= minimasIteraciones)){
+                if((iteraciones - 1 == minimasIteraciones) && (error < errorOptimo)){
+                    minimasIteraciones = iteraciones - 1;
+                    omega = Operador.redondear(w,2);
+                    errorOptimo = error;
+                } else if(iteraciones - 1 != minimasIteraciones){
+                    minimasIteraciones = iteraciones - 1;
+                    omega = Operador.redondear(w,2);
+                    errorOptimo = error;
+                }
+            }
+            System.out.print("Omega: "+Operador.redondear(w,2)+ "  " +"\t");
+            Operador.mostrarSolucion(u,error,iteraciones - 1);
+        }
+        return omega;
+    }
 }

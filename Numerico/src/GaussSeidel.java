@@ -39,6 +39,11 @@ public class GaussSeidel {
         }
     }
 
+    public void reiniciarVariables(){
+        Operador.reiniciarVariables(u,semilla);
+        error = 0.0f;
+    }
+
     public float[] obtenerSolucion(){return u;}
 
     public float obtenerError(){return error;}

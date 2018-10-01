@@ -44,7 +44,7 @@ public class Operador {
     }
 
     // Redondeo de un numero a tantos decimalesSignificativos
-    public static float rendondear(float numero){
+    public static float redondear(float numero){
         float resultado = (float) (numero * Math.pow(10, decimalesSignificativos));
         resultado = Math.round(resultado);
         resultado = (float) (resultado/Math.pow(10, decimalesSignificativos));
@@ -52,18 +52,27 @@ public class Operador {
         return resultado;
     }
 
+    // Redondeo de un numero a tantos decimales pasados por parametro
+    public static float redondear(float numero, int decimales){
+        float resultado = (float) (numero * Math.pow(10, decimales));
+        resultado = Math.round(resultado);
+        resultado = (float) (resultado/Math.pow(10, decimales));
+
+        return resultado;
+    }
+
     // Muestra la solucion iterativa
     public static void mostrarSolucion(float[] vector, float error, int iteracion){
         for (int i = 0; i < vector.length; i++) {
-            vector[i] = rendondear(vector[i]);
+            vector[i] = redondear(vector[i]);
         }
 
         System.out.print("Solucion: [\t");
         for (int i = 0; i < vector.length; i++) {
             System.out.print(vector[i] + " \t");
         }
-        System.out.print(" ]\terror:\t" + Operador.rendondear(error));
-        System.out.println("\titeracion:\t" + iteracion);
+        System.out.print(" ]\terror:\t" + Operador.redondear(error));
+        System.out.println("\titeraciones:\t" + iteracion);
     }
 
     // Reinicia la solucion iterativa y la semilla a un estado nulo
@@ -75,20 +84,21 @@ public class Operador {
     }
 
     // Criterios para terminar con las iteraciones
-    public static boolean condicionCorte(float error, int iteracion){
-        if((error > precision) || ((error == 0.0) && (iteracion == 0)))
-            return true;
-        else
+    // S
+    public static boolean condicionCorte(float error){
+        if((error >= precision))
             return false;
+        else
+            return true;
     }
 
     // Seteo de decimales significativos a utilizar
-    public void setDecimalesSignificativos(int decimales) {
+    public static void setearDecimalesSignificativos(int decimales) {
         decimalesSignificativos = decimales;
     }
 
     // Seteo de la tolerancia a utilizar en el calculo del error
-    public void setPresicion(float tolerancia){
-        this.precision = tolerancia;
+    public static void setearPresicion(float tolerancia){
+        precision = tolerancia;
     }
 }

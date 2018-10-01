@@ -9,54 +9,83 @@ public class Main {
     static int dimension = 5;                                   // Dimension del Problema (n)
 
     // Variables para la solución del problema
-    static float[] f = new float[dimension + 1];                // Solucion matricial
-    static float[] semilla = new float[dimension + 1];          // Solucion de arranque
+    static float[] q;                // Funcion de carga
+    static float[] f;                // Solucion matricial
+    static float[] semilla;          // Solucion de arranque
 
 
     public static void main(String[] args) {
 
-        calcularFi();
+        // Inicialización de variables y métodos
+        calcularVariablesIniciales();
         inicializarSemilla();
-        GaussSeidel gs = new GaussSeidel(f,semilla);
         Sor sor = new Sor(f,semilla);
 
-        // Ejemplo para correr diez iteraciones con Gauss-Seidel
-        System.out.println("Metodo Gauss-Seidel");
-        int iteracionGS = 0;
-        while (iteracionGS < 10) {
-            gs.calcular();
-            Operador.mostrarSolucion(gs.obtenerSolucion(), gs.obtenerError(), iteracionGS);
-            iteracionGS++;
+        // Seteo de precisión y cantidad de decimales significativos
+        // (ITEM 4 DEL TP, CONSIDERANDO CAMBIAR LA DIMENSION PARA CADA CASO)
+        Operador.setearPresicion(0.01f);
+        Operador.setearDecimalesSignificativos(6);
+
+        // Calculo SOR para distintos omegas. Desde 1 a 1.95, incrementando omega de a 0.05
+        // (ITEM 4 DEL TP, CONSIDERANDO CAMBIAR LA DIMENSION PARA CADA CASO)
+        float incrementoOmega = 0.05f;
+        for (float w = 1; w <= 1.95f; w+= incrementoOmega) {
+            System.out.println();
+            System.out.println("Metodo Sor | dimensión n = " + dimension + " | Utilizando w = " + Operador.redondear(w,2));
+            int iteracionSor = 1;
+            sor.setearOmega(Operador.redondear(w,2));
+            while (!Operador.condicionCorte(sor.obtenerError())) {
+                sor.calcular();
+                iteracionSor++;
+            }
+            Operador.mostrarSolucion(sor.obtenerSolucion(),sor.obtenerError(),iteracionSor - 1);
+            sor.reiniciarVariables();
         }
 
+        // Omega Optimo
+        // (ITEM 5 DEL TP, CONSIDERANDO CAMBIAR LA DIMENSION PARA CADA CASO)
         System.out.println();
         System.out.println();
+        System.out.println("Calculo de Omega òptimo experimentalmente:");
+        float omegaOptimo = sor.omegaOptimo();
+        sor.reiniciarVariables();
+        System.out.println();
+        System.out.println("El Omega que presento la menor cantidad de iteraciones con el menor error es: " + omegaOptimo);
 
-        // Ejemplo para correr diez iteraciones con Sor usando w = 1 (debería dar lo mismo que GS)
-        System.out.println("Metodo Sor con w = 1");
-        int iteracionSor = 0;
-        while (iteracionSor < 10) {
+        // Calculo SOR utilizando el omega optimo calculado previamente
+        // (ITEM 6 DEL TP, CONSIDERANDO CAMBIAR LA DIMENSION PARA CADA CASO)
+        Operador.setearPresicion(0.0001f);
+        System.out.println();
+        System.out.println("Metodo Sor | dimensión n = " + dimension + " | Utilizando w = " + Operador.redondear(omegaOptimo,2));
+        int iteracionSorOptimo = 1;
+        sor.setearOmega(omegaOptimo);
+        while (!Operador.condicionCorte(sor.obtenerError())) {
             sor.calcular();
-            Operador.mostrarSolucion(sor.obtenerSolucion(),sor.obtenerError(),iteracionSor);
-            iteracionSor++;
+            iteracionSorOptimo++;
         }
+        Operador.mostrarSolucion(sor.obtenerSolucion(),sor.obtenerError(),iteracionSorOptimo - 1);
+        sor.reiniciarVariables();
     }
 
-    // Calculo del vector soluciòn F --> (f0,f1,f2...fn)
-    static void calcularFi(){
+    // Calculo del vector solución F --> (f0,f1,f2...fn)
+    // Calculo del vector función de carga q(x) --> (q0,q1,q2..qn)
+    static void calcularVariablesIniciales(){
+        q = new float[dimension + 1];
+        f = new float[dimension + 1];
         float x;
-        float Qx;
         for (int i = 0; i <= dimension; i++) {
             x = (i*L) / (float) dimension;
-            Qx = numeroGrupo + ((numeroGrupo*numeroGrupo) * (x - (x*x)));
-            f[i] = (float) ((Qx / (E*I)) * Math.pow((L / (float) dimension),4));
+            q[i] = numeroGrupo + ((numeroGrupo*numeroGrupo) * (x - (x*x)));
+            f[i] = (float) ((q[i] / (E*I)) * Math.pow((L / (float) dimension),4));
         }
     }
 
     // Setear semilla en 0's    ->  [0,0,0,....0]
     static void inicializarSemilla(){
+        semilla = new float[dimension + 1];
         for (int i = 0; i <= dimension; i++) {
             semilla[i] = 0.0f;
         }
     }
+
 }
