@@ -5,7 +5,6 @@ public class Sor {
     private float[] semilla;                 //Solucion al problema de arranque
     private float error;                     //Error de la solucion
     private int dimension;                   //Dimension del problema (n)
-    private GaussSeidel gs;
     private float w;                         //  1 <= Omega <= 2.   Omega == 1 es equivalente a usar Gauss-Seidel
 
     public Sor(float[] solucion, float[] semilla){
@@ -14,31 +13,28 @@ public class Sor {
         this.semilla = semilla.clone();
         error = 1.0f;
         dimension = u.length - 1;
-        gs = new GaussSeidel(solucion,semilla);
         w = 1.0f;
     }
 
     public void calcular() {
 
-        // Itero con Gauss-Seidel para obtener los u(k+1)
-        gs.calcular();
-
         // Solución en u[0]
         u[0] = 0.0f;
 
         // Solucion en u[1]
-        u[1] = u[1] * (1 - w) + w * gs.obtenerSolucion()[1];
+        u[1] = (semilla[1] * (1 - w)) + (w * ((4*u[0] + 4*semilla[2] - semilla[3] + f[1]) / 5.0f));
 
         // Solucion de u[2] a u[n-2]
         for (int i = 2; i <= dimension - 2; i++) {
-            u[i] = u[i] * (1 - w) + w * gs.obtenerSolucion()[i];
+            u[i] = (semilla[i] * (1 - w)) + (w * (((-1)*u[i-2] + 4*u[i-1] + 4*semilla[i+1] - semilla[i+2] + f[i]) / 6.0f));
         }
 
         // Solucion de u[n-1]
-        u[dimension-1] = u[dimension-1] * (1 - w) + w * gs.obtenerSolucion()[dimension-1];
+        u[dimension - 1] = (semilla[dimension - 1] * (1 - w)) + (w * (((-1)*u[dimension-3] + 4*u[dimension-2] + 4*semilla[dimension] + f[dimension-1]) / 5.0f));
 
         // Solucion de u[n]
-        u[dimension] = u[dimension] * (1 - w) + w * gs.obtenerSolucion()[dimension];
+        u[dimension] = 0.0f;
+
 
         error = Operador.presicionRelavita(u,semilla);
 
@@ -61,7 +57,6 @@ public class Sor {
 
     public void reiniciarVariables(){
         Operador.reiniciarVariables(u,semilla);
-        gs.reiniciarVariables();
         error = 1.0f;
     }
 
@@ -100,6 +95,7 @@ public class Sor {
             }
             System.out.print("Omega: "+Operador.redondear(w,2)+ "  " +"\t");
             Operador.mostrarSolucion(u,error,iteraciones - 1);
+            System.out.println("Omega optimo: " + omega);
         }
         return omega;
     }

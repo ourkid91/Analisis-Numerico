@@ -63,15 +63,18 @@ public class Operador {
 
     // Muestra la solucion iterativa
     public static void mostrarSolucion(float[] vector, float error, int iteracion){
+        float[] muestra = new float[vector.length];
         for (int i = 0; i < vector.length; i++) {
-            vector[i] = redondear(vector[i]);
+            muestra[i] = redondear(vector[i]);
         }
 
         System.out.print("Solucion: [\t");
-        for (int i = 0; i < vector.length; i++) {
+        for (int i = 0; i < muestra.length; i++) {
+            //System.out.print(muestra[i] + " \t");
             System.out.print(vector[i] + " \t");
         }
-        System.out.print(" ]\terror:\t" + Operador.redondear(error));
+        //System.out.print(" ]\terror:\t" + Operador.redondear(error));
+        System.out.print(" ]\terror:\t" + (error));
         System.out.println("\titeraciones:\t" + iteracion);
     }
 

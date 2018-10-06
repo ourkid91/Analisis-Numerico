@@ -13,7 +13,6 @@ public class Main {
     static float[] f;                // Solucion matricial
     static float[] semilla;          // Solucion de arranque
 
-
     public static void main(String[] args) {
 
         // Inicialización de variables y métodos
@@ -24,7 +23,8 @@ public class Main {
         // Seteo de precisión y cantidad de decimales significativos
         // (ITEM 4 DEL TP, CONSIDERANDO CAMBIAR LA DIMENSION PARA CADA CASO)
         Operador.setearPresicion(0.01f);
-        Operador.setearDecimalesSignificativos(6);
+        //Operador.setearDecimalesSignificativos(6);
+
 
         // Calculo SOR para distintos omegas. Desde 1 a 1.95, incrementando omega de a 0.05
         // (ITEM 4 DEL TP, CONSIDERANDO CAMBIAR LA DIMENSION PARA CADA CASO)
@@ -36,6 +36,8 @@ public class Main {
             sor.setearOmega(Operador.redondear(w,2));
             while (!Operador.condicionCorte(sor.obtenerError())) {
                 sor.calcular();
+                // Mostrar solucion
+                //Operador.mostrarSolucion(sor.obtenerSolucion(),sor.obtenerError(),iteracionSor);
                 iteracionSor++;
             }
             Operador.mostrarSolucion(sor.obtenerSolucion(),sor.obtenerError(),iteracionSor - 1);
@@ -65,6 +67,22 @@ public class Main {
         }
         Operador.mostrarSolucion(sor.obtenerSolucion(),sor.obtenerError(),iteracionSorOptimo - 1);
         sor.reiniciarVariables();
+
+        //ITEM 7 DEL TP
+        // Orden de convergencia segun los errores en las primeras iteraciones
+        System.out.println();
+        float[] errores = new float[3];
+        int iteracionesErrores = 0;
+        while(iteracionesErrores < 3){
+            sor.calcular();
+            errores[iteracionesErrores] = sor.obtenerError();
+            iteracionesErrores++;
+        }
+
+        float dividendo = (float) Math.log10(errores[2]/errores[1]);
+        float divisor = (float) Math.log10(errores[1]/errores[0]);
+        float ordenConvergencia = dividendo/divisor;
+        System.out.println("Orden de convergencia para el metodo: " + ordenConvergencia);
     }
 
     // Calculo del vector solución F --> (f0,f1,f2...fn)
@@ -87,5 +105,4 @@ public class Main {
             semilla[i] = 0.0f;
         }
     }
-
 }
