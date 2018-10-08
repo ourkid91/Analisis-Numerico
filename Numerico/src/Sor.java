@@ -6,7 +6,7 @@ public class Sor {
     private float error;                     //Error de la solucion
     private int dimension;                   //Dimension del problema (n)
     private float w;                         //  1 <= Omega <= 2.   Omega == 1 es equivalente a usar Gauss-Seidel
-
+    
     public Sor(float[] solucion, float[] semilla){
         u = new float[solucion.length];
         f = solucion;
@@ -36,7 +36,7 @@ public class Sor {
         u[dimension] = 0.0f;
 
 
-        error = Operador.presicionRelavita(u,semilla);
+        error = Operador.presicionRelativa(u,semilla);
 
         for (int i = 0; i < u.length; i++) {
             semilla[i] = u[i];
@@ -60,43 +60,45 @@ public class Sor {
         error = 1.0f;
     }
 
-    public float omegaOptimo(){
-        float omega = 1.0f;
-        int minimasIteraciones;
-        int iteraciones = 1;
-        float errorOptimo = 1.0f;
-        setearOmega(omega);
-
-        while (!Operador.condicionCorte(error)){
-            calcular();
-            iteraciones++;
-        }
-        minimasIteraciones = iteraciones - 1;
-
-        float incremento = 0.05f;
-        for (float w = (1+incremento); Operador.redondear(w,2) <= 1.95f; w += incremento){
-            reiniciarVariables();
-            iteraciones = 1;
-            setearOmega(Operador.redondear(w,2));
-            while (!Operador.condicionCorte(error)){
-                calcular();
-                iteraciones++;
-            }
-            if((iteraciones - 1 <= minimasIteraciones)){
-                if((iteraciones - 1 == minimasIteraciones) && (error < errorOptimo)){
-                    minimasIteraciones = iteraciones - 1;
-                    omega = Operador.redondear(w,2);
-                    errorOptimo = error;
-                } else if(iteraciones - 1 != minimasIteraciones){
-                    minimasIteraciones = iteraciones - 1;
-                    omega = Operador.redondear(w,2);
-                    errorOptimo = error;
-                }
-            }
-            System.out.print("Omega: "+Operador.redondear(w,2)+ "  " +"\t");
-            Operador.mostrarSolucion(u,error,iteraciones - 1);
-            System.out.println("Omega optimo: " + omega);
-        }
-        return omega;
-    }
+    
+    //Saco este metodo por ahora porque se esta calculando 2 veces lo mismo (items 4 y 5)
+//    public float omegaOptimo(){
+//        float omega = 1.0f;
+//        int minimasIteraciones;
+//        int iteraciones = 1;
+//        float errorOptimo = 1.0f;
+//        setearOmega(omega);
+//
+//        while (!Operador.condicionCorte(error)){
+//            calcular();
+//            iteraciones++;
+//        }
+//        minimasIteraciones = iteraciones - 1;
+//
+//        float incremento = 0.05f;
+//        for (float w = (1+incremento); Operador.redondear(w,2) <= 1.95f; w += incremento){
+//            reiniciarVariables();
+//            iteraciones = 1;
+//            setearOmega(Operador.redondear(w,2));
+//            while (!Operador.condicionCorte(error)){
+//                calcular();
+//                iteraciones++;
+//            }
+//            if((iteraciones - 1 <= minimasIteraciones)){
+//                if((iteraciones - 1 == minimasIteraciones) && (error < errorOptimo)){
+//                    minimasIteraciones = iteraciones - 1;
+//                    omega = Operador.redondear(w,2);
+//                    errorOptimo = error;
+//                } else if(iteraciones - 1 != minimasIteraciones){
+//                    minimasIteraciones = iteraciones - 1;
+//                    omega = Operador.redondear(w,2);
+//                    errorOptimo = error;
+//                }
+//            }
+//            System.out.print("Omega: "+Operador.redondear(w,2)+ "  " +"\t");
+//            Operador.mostrarSolucion(u,error,iteraciones - 1);
+//            System.out.println("Omega optimo: " + omega);
+//        }
+//        return omega;
+//    }
 }

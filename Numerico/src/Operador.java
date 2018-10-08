@@ -1,21 +1,10 @@
 public class Operador {
 
     // Tolerancia
-    public static float precision = 0.001f;
+    public static float precision = 0.01f;
 
     // Cantidad de decimales significativos a utilizar
     public static int decimalesSignificativos = 6;
-
-
-    // Maximo elemento en módulo de un vector
-    private static float maximoEnVector(float[] vector){
-        float aux = vector[0];
-        for (int i = 0; i < vector.length; i++) {
-            if(aux < vector[i])
-                aux = vector[i];
-        }
-        return aux;
-    }
 
     // Maximo de un vector en valor absoluto
     public static float normaInfinitaEnVector(float[] vector){
@@ -38,7 +27,7 @@ public class Operador {
     }
 
     // Presicion relativa - Error
-    public static float presicionRelavita(float[] v1, float[] v2){
+    public static float presicionRelativa(float[] v1, float[] v2){
         return (normaInfinitaDiferencialVectorial(v1,v2))/normaInfinitaEnVector(v1);
 
     }
@@ -95,10 +84,10 @@ public class Operador {
             return true;
     }
 
-    // Seteo de decimales significativos a utilizar
-    public static void setearDecimalesSignificativos(int decimales) {
-        decimalesSignificativos = decimales;
-    }
+//    // Seteo de decimales significativos a utilizar
+//    public static void setearDecimalesSignificativos(int decimales) {
+//        decimalesSignificativos = decimales;
+//    }
 
     // Seteo de la tolerancia a utilizar en el calculo del error
     public static void setearPresicion(float tolerancia){
