@@ -25,28 +25,32 @@ public class Main {
     static double vx0;       // Velocidad inicial en x
     static double vy0;       // Velocidad inicial en y
     
-    // Variables para la solucion del problema
-    static double d1;          // Distancia entre la sonda y la Tierra 
-    static double d2;          // Distancia entre la sonda y la Luna
-    static double dc;          // Distancia entre la sonda y el centro de masa del sistema 
-    static double a_f1;        // Angulo entre el eje x y la fuerza que ejerce la Tierra sobre la sonda 
-    static double a_f2;        // Angulo entre el eje x y la fuerza que ejerce la Luna sobre la sonda
-    static double a_fc;        // Angulo entre el eje x y la fuerza centrifuga
+    static double d1 = Math.sqrt(Math.pow((x1 - x0),2) + Math.pow((y1 - y0),2));   // Distancia entre la sonda y la Tierra 
+    static double d2 = Math.sqrt(Math.pow((x2 - x0),2) + Math.pow((y2 - y0),2));   // Distancia entre la sonda y la Luna
+    static double dc = Math.sqrt(Math.pow(x0,2) + Math.pow(y0,2));                 // Distancia entre la sonda y el centro de masa del sistema 
+
+    static double a_f1 = Math.atan((y1 - y0) / (x1 - x0));    // Angulo entre el eje x y la fuerza que ejerce la Tierra sobre la sonda 
+    static double a_f2 = Math.atan((y2 - y0) / (x2 - x0));    // Angulo entre el eje x y la fuerza que ejerce la Luna sobre la sonda
+    static double a_fc = Math.atan(y0 / x0);	              // Angulo entre el eje x y la fuerza centrifuga
+    
+    // Variables para la solucion del problema    
+    static double tiempo_total;			//Tiempo de la simulación
     
     
     public static void main(String[] args) {
     	
         // (PARTE 1)
-    	v0 = Math.sqrt((G * M1) / (r1 + h0));
-    	inicializar_velocidad();
-    	actualizar_variables(x0,y0);
-    	
+    	inicializar_velocidad(Math.sqrt((G * M1) / (r1 + h0)));
+    	tiempo_total = 2 * Math.PI * (r1 + h0) / v0;
+
     }
 
 
-	private static void inicializar_velocidad() {
+	private static void inicializar_velocidad(double velocidad_inicial) {
+		v0 = velocidad_inicial;
 		vx0 = v0 * Math.cos(a_v0);
 		vy0 = v0 * Math.sin(a_v0);
+		
 	}
     
 	private static void actualizar_variables(double x, double y) {
