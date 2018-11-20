@@ -1,13 +1,10 @@
 public class Operador {
 
-    // Tolerancia
-    public static float precision = 0.01f;
-
     // Cantidad de decimales significativos a utilizar
     public static int decimalesSignificativos = 6;
 
     // Redondeo de un numero a tantos decimalesSignificativos
-    public static float redondear(float numero){
+    public static float redondear(double numero){
         float resultado = (float) (numero * Math.pow(10, decimalesSignificativos));
         resultado = Math.round(resultado);
         resultado = (float) (resultado/Math.pow(10, decimalesSignificativos));
@@ -27,11 +24,6 @@ public class Operador {
     // Seteo de decimales significativos a utilizar
     public static void setearDecimalesSignificativos(int decimales) {
         decimalesSignificativos = decimales;
-    }
-
-    // Seteo de la tolerancia a utilizar en el calculo del error
-    public static void setearPresicion(float tolerancia){
-        precision = tolerancia;
     }
     
 }
