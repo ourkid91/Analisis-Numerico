@@ -35,23 +35,42 @@ public class Main {
     
     // Variables para la solucion del problema    
     static double tiempo_total;	        //Tiempo de la simulación
-    static double paso_de_termino;		//Paso de término (Tn+1 - Tn)
+    static double paso_de_termino;		//Paso de termino (Tn+1 - Tn)
+    static double Em;                   //Energia mecanica especifica
+    static double Ec;                   //Energia cinetica especifica
+    static double Ep;                   //Energia potencial especifica
     
     
     public static void main(String[] args) {
     	
-        // (PARTE 1)
+        // PARTE 1
     	M2 = 0;
     	w = 0;
     	inicializar_velocidad(Math.sqrt((G * M1) / (r1 + h0)));
     	tiempo_total = 2 * Math.PI * (r1 + h0) / v0;
     	paso_de_termino = 0.1;
+    	
+    	System.out.println("MÉTODO DE EULER EXPLÍCITO");
     	euler(x0 , y0 , vx0 , vy0,paso_de_termino,tiempo_total);
+    	
+    	System.out.println();
+    	System.out.println("MÉTODO DE RUNGE-KUTTA 2");
     	runge_kutta_2(x0 , y0 , vx0 , vy0,paso_de_termino,tiempo_total);
+
+    	
+        // PARTE 2
+    	// PARA EL RESTO DEL TP USAMOS EL METODO DE RUNGE-KUTTA 2
+        M2 = 73.48 * Math.pow(10,21);
+        w = 4.236 * Math.pow(10,-7);
+        
+    	// PUNTO A) TRAYECTORIA EN FORMA DE 8
+    	inicializar_velocidad(Math.sqrt((G * M1) / (r1 + h0)));
     	
     }
     
     private static void euler(double x0, double y0 , double vx0, double vy0, double h, double tiempo_simulacion) {
+    	actualizar_variables(x0,y0);
+    	System.out.println("t0" + "	x = "+ x0 +"  y = "+ y0 +"  d1 = "+ d1 +"  Em = "+ Em);
     	
     	double an = x0;
     	double bn = y0;
@@ -68,8 +87,9 @@ public class Main {
     		cn_siguiente = cn + h * fc(an,bn,cn,dn);
     		dn_siguiente = dn + h * fd(an,bn,cn,dn);
     		
+    		actualizar_variables(an_siguiente,bn_siguiente);
     		if(i % 1000 == 0) {
-    		System.out.println("t"+(i+1)+"	x = "+ an_siguiente +"  y = "+ bn_siguiente +"  vx = "+ cn_siguiente +"  vy = "+ dn_siguiente);
+    		System.out.println("t"+(i+1)+"	x = "+ an_siguiente +"  y = "+ bn_siguiente +"  d1 = "+ d1 +"  Em = "+ Em);
     		}
     		
     		an = an_siguiente;
@@ -79,10 +99,12 @@ public class Main {
     		
     		i++;
     	}
-		System.out.println("t"+(i+1)+"	x = "+ an_siguiente +"  y = "+ bn_siguiente +"  vx = "+ cn_siguiente +"  vy = "+ dn_siguiente);    	
+		System.out.println("t"+ i +"	x = "+ an_siguiente +"  y = "+ bn_siguiente +"  d1 = "+ d1 +"  Em = "+ Em);    	
     }
 
     private static void runge_kutta_2(double x0, double y0 , double vx0, double vy0, double h, double tiempo_simulacion) {
+    	actualizar_variables(x0,y0);
+    	System.out.println("t0" + "	x = "+ x0 +"  y = "+ y0 +"  d1 = "+ d1 +"  Em = "+ Em);
     	
     	double an = x0;
     	double bn = y0;
@@ -107,9 +129,10 @@ public class Main {
     		bn_siguiente = bn + (double) 1/2 * (q1b + q2b);
     		cn_siguiente = cn + (double) 1/2 * (q1c + q2c);
     		dn_siguiente = dn + (double) 1/2 * (q1d + q2d);
-		
+
+    		actualizar_variables(an_siguiente,bn_siguiente);
     		if(i % 1000 == 0) {
-    			System.out.println("t"+(i+1)+"	x = "+ an_siguiente +"  y = "+ bn_siguiente +"  vx = "+ cn_siguiente +"  vy = "+ dn_siguiente);
+    			System.out.println("t"+(i+1)+"	x = "+ an_siguiente +"  y = "+ bn_siguiente +"  d1 = "+ d1 +"  Em = "+ Em);
     		}
 		
     		an = an_siguiente;
@@ -119,7 +142,7 @@ public class Main {
 		
     		i++;
     	}
-    	System.out.println("t"+(i+1)+"	x = "+ an_siguiente +"  y = "+ bn_siguiente +"  vx = "+ cn_siguiente +"  vy = "+ dn_siguiente);    	
+    	System.out.println("t"+ i +"	x = "+ an_siguiente +"  y = "+ bn_siguiente +"  d1 = "+ d1 +"  Em = "+ Em);    	
     }
     
 	public static double fa(double an, double bn, double cn, double dn) {		
@@ -150,42 +173,50 @@ public class Main {
 		return fuerza_1_y + fuerza_2_y + fuerza_c_y;
 	}
 	
-	//Devuelve True si la sonda choco con la Tierra o con la Luna.
+	//Devuelve True si la sonda choco con algo.
 	private static boolean choco(double x, double y) {
 		return choco_con_tierra(x,y) || choco_con_luna(x,y);
 	}
 
+	//Devuelve True si la sonda choco con la Tierra.
 	private static boolean choco_con_tierra(double x, double y) {
 		if(Math.sqrt(Math.pow(x - x1,2) + Math.pow(y,2) ) < r1) {
-			System.out.println("Chocó con la Tierra");
+			System.out.println("CHOCÓ CON LA TIERRA");
 			return true;
 		}
 		return false;
 	}
 	
+	//Devuelve True si la sonda choco con la Luna.
 	private static boolean choco_con_luna(double x, double y) {
 		if(Math.sqrt(Math.pow(x - x2,2) + Math.pow(y,2) ) < r2) {
-			System.out.println("Chocó con la Luna");
+			System.out.println("CHOCÓ CON LA LUNA");
 			return true;
 		}
 		return false;
 	}
 
+	//Setea la velocidad y sus componentes.
 	private static void inicializar_velocidad(double velocidad_inicial) {
 		v0 = velocidad_inicial;
 		vx0 = v0 * Operador.redondear(Math.cos(a_v0));
 		vy0 = v0 * Math.sin(a_v0);
 	}
     
+	//Calcula las variables en funcion de x e y que varian con el tiempo.
 	private static void actualizar_variables(double x, double y) {
 		d1 = Math.sqrt(Math.pow((x1 - x),2) + Math.pow((y1 - y),2));
 		d2 = Math.sqrt(Math.pow((x2 - x),2) + Math.pow((y2 - y),2));
 		dc = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));		
 		a_f1 = arco_tangente((x1 - x),(y1 - y));
 		a_f2 = arco_tangente((x2 - x),(y2 - y));
-		a_fc = arco_tangente(x,y);		
+		a_fc = arco_tangente(x,y);
+		Ec = (double) 1/2 * Math.pow(v0,2);
+		Ep = -G * M1 / d1;
+		Em = Ec + Ep;
 	}
 	
+	//Calcula la funcion arco tangente teniendo en cuenta el cuadrante de las coordenadas.
 	private static double arco_tangente(double x, double y) {
 		if (x == 0) {
 			if (y > 0) return (double) 1/2 * Math.PI;
