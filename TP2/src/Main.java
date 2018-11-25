@@ -64,7 +64,27 @@ public class Main {
         w = 4.236 * Math.pow(10,-7);
         
     	// PUNTO A) TRAYECTORIA EN FORMA DE 8
-    	inicializar_velocidad(Math.sqrt((G * M1) / (r1 + h0)));
+        //En v0 = 1.4 * Math.sqrt((G * M1) / (r1 + h0)) choca con la Luna
+        //deberiamos probar una velocidad apenas menor, por ejemplo 1,399 * Math...
+    	inicializar_velocidad((double) 1.4 * Math.sqrt((G * M1) / (r1 + h0)));
+    	tiempo_total = 300 * Math.PI * (r1 + h0) / v0;
+    	paso_de_termino = 0.1;
+    	
+//    	System.out.println();
+//    	System.out.println();
+//    	System.out.println("TRAYECTORIA EN FORMA DE 8");
+//    	runge_kutta_2(x0 , y0 , vx0 , vy0,paso_de_termino,tiempo_total);
+
+        
+    	// PUNTO B) ORBITA ELIPSOIDAL QUE PASA FUERA DE LA TIERRA Y LA LUNA
+    	inicializar_velocidad((double) 1.401 * Math.sqrt((G * M1) / (r1 + h0)));
+    	tiempo_total = 300 * Math.PI * (r1 + h0) / v0;
+    	paso_de_termino = 0.1;
+    	
+    	System.out.println();
+    	System.out.println();
+    	System.out.println("TRAYECTORIA ELIPSOIDAL QUE PASA FUERA DE LA LUNA Y LA TIERRA");
+    	runge_kutta_2(x0 , y0 , vx0 , vy0,paso_de_termino,tiempo_total);
     	
     }
     
@@ -98,8 +118,10 @@ public class Main {
     		dn = dn_siguiente;
     		
     		i++;
+    		
+    		if(h * i >= tiempo_simulacion) System.out.println("t"+ i +"	x = "+ an_siguiente +"  y = "+ bn_siguiente +"  d1 = "+ d1 +"  Em = "+ Em);    	
+
     	}
-		System.out.println("t"+ i +"	x = "+ an_siguiente +"  y = "+ bn_siguiente +"  d1 = "+ d1 +"  Em = "+ Em);    	
     }
 
     private static void runge_kutta_2(double x0, double y0 , double vx0, double vy0, double h, double tiempo_simulacion) {
@@ -112,6 +134,10 @@ public class Main {
     	double dn = vy0;
     	
     	double q1a,q2a,q1b,q2b,q1c,q2c,q1d,q2d,an_siguiente=0,bn_siguiente=0,cn_siguiente=0,dn_siguiente=0;
+    	int intervalo_muestra;
+    	
+    	if(tiempo_simulacion > 100000) intervalo_muestra = 50000;
+    	else intervalo_muestra = 1000;
     	
     	int i = 0;
     	while(!choco(an,bn) && (h * i < tiempo_simulacion)) {
@@ -131,18 +157,20 @@ public class Main {
     		dn_siguiente = dn + (double) 1/2 * (q1d + q2d);
 
     		actualizar_variables(an_siguiente,bn_siguiente);
-    		if(i % 1000 == 0) {
+    		if(i % intervalo_muestra == 0) {
     			System.out.println("t"+(i+1)+"	x = "+ an_siguiente +"  y = "+ bn_siguiente +"  d1 = "+ d1 +"  Em = "+ Em);
     		}
-		
+    				
     		an = an_siguiente;
     		bn = bn_siguiente;
     		cn = cn_siguiente;
     		dn = dn_siguiente;
 		
     		i++;
+    		
+    		if(h * i >= tiempo_simulacion) System.out.println("t"+i+"	x = "+ an_siguiente +"  y = "+ bn_siguiente +"  d1 = "+ d1 +"  Em = "+ Em);
+    		
     	}
-    	System.out.println("t"+ i +"	x = "+ an_siguiente +"  y = "+ bn_siguiente +"  d1 = "+ d1 +"  Em = "+ Em);    	
     }
     
 	public static double fa(double an, double bn, double cn, double dn) {		
