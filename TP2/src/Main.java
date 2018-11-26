@@ -62,24 +62,21 @@ public class Main {
     	// PARA EL RESTO DEL TP USAMOS EL METODO DE RUNGE-KUTTA 2
         M2 = 73.48 * Math.pow(10,21);
         w = 4.236 * Math.pow(10,-7);
-        
-    	// PUNTO A) TRAYECTORIA EN FORMA DE 8
-        //En v0 = 1.4 * Math.sqrt((G * M1) / (r1 + h0)) choca con la Luna
-        //deberiamos probar una velocidad apenas menor, por ejemplo 1,399 * Math...
-    	inicializar_velocidad((double) 1.4 * Math.sqrt((G * M1) / (r1 + h0)));
-    	tiempo_total = 300 * Math.PI * (r1 + h0) / v0;
     	paso_de_termino = 0.1;
     	
-//    	System.out.println();
-//    	System.out.println();
-//    	System.out.println("TRAYECTORIA EN FORMA DE 8");
-//    	runge_kutta_2(x0 , y0 , vx0 , vy0,paso_de_termino,tiempo_total);
+    	// PUNTO A) TRAYECTORIA EN FORMA DE 8
+    	inicializar_velocidad((double) 1.3988 * Math.sqrt((G * M1) / (r1 + h0)));
+    	tiempo_total = 370 * Math.PI * (r1 + h0) / v0;
+    	
+    	System.out.println();
+    	System.out.println();
+    	System.out.println("TRAYECTORIA EN FORMA DE 8");
+    	runge_kutta_2(x0 , y0 , vx0 , vy0,paso_de_termino,tiempo_total);
 
         
     	// PUNTO B) ORBITA ELIPSOIDAL QUE PASA FUERA DE LA TIERRA Y LA LUNA
     	inicializar_velocidad((double) 1.401 * Math.sqrt((G * M1) / (r1 + h0)));
     	tiempo_total = 300 * Math.PI * (r1 + h0) / v0;
-    	paso_de_termino = 0.1;
     	
     	System.out.println();
     	System.out.println();
@@ -240,7 +237,7 @@ public class Main {
 		a_f2 = arco_tangente((x2 - x),(y2 - y));
 		a_fc = arco_tangente(x,y);
 		Ec = (double) 1/2 * Math.pow(v0,2);
-		Ep = -G * M1 / d1;
+		Ep = -G * M1 / d1 - G * M2 / d2;
 		Em = Ec + Ep;
 	}
 	
